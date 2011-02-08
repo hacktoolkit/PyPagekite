@@ -2111,6 +2111,7 @@ class UserConn(Selectable):
     for p in protos:
       if not backend: backend = self.conns.config.GetBackendServer('%s-%s' % (p, on_port), host)
       if not backend: backend = self.conns.config.GetBackendServer(p, host)
+      if not backend: backend = self.conns.config.GetBackendServer(p, CATCHALL_HN)
 
     logInfo = [
       ('on_port', on_port),
