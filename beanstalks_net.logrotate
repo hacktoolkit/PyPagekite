@@ -3,7 +3,7 @@
 	missingok
 	rotate 7
 	postrotate
-		[ ! -f /var/run/beanstalks_net.pid ] || kill -HUP `cat /var/run/beanstalks_net.pid`
+		[ ! -f /var/run/beanstalks_net.rpid ] || kill -HUP `cat /var/run/beanstalks_net.rpid`
 	endscript
 	compress
 	notifempty

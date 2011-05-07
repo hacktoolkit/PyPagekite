@@ -13,13 +13,15 @@
 ### END INIT INFO
 
 PATH=/sbin:/bin:/usr/sbin:/usr/bin
-BSPNETD=/usr/local/bin/beanstalks_net.py
+BSPNET=/usr/local/bin/beanstalks_net.py
+BSPNETD=/usr/bin/daemon
 NAME=beanstalks_net.py
 DESC="Beanstalks.net HTTP/HTTPS front-end connector"
+BSPNET_PID=/var/run/beanstalks_net.rpid
 BSPNETD_PID=/var/run/beanstalks_net.pid
 BSPNETD_CONF=/usr/local/etc/beanstalks_net.cfg
 
-[ -x $BSPNETD ] || exit 0
+[ -x $BSPNETD -a -x $BSPNET ] || exit 0
 
 # loading lsb functions
 . /lib/lsb/init-functions
@@ -28,9 +30,15 @@ case "$1" in
     start)
         log_daemon_msg "Starting $DESC"
         log_progress_msg "$NAME"
-        start_daemon -p $BSPNETD_PID $BSPNETD --pidfile=$BSPNETD_PID \
-                                              --daemonize \
-                                              --clean --optfile=$BSPNETD_CONF
+        start_daemon -p $BSPNETD_PID $BSPNETD --noconfig \
+                                              --unsafe \
+                                              --respawn \
+                                              --delay=60 \
+                                              --name=$NAME \
+                                              --pidfile=$BSPNETD_PID \
+                                              -- $BSPNET --clean \
+                                              --pidfile=$BSPNET_PID \
+                                              --optfile=$BSPNETD_CONF
         log_end_msg "$?"
         ;;
 
